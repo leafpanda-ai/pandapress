@@ -2,23 +2,31 @@
 import os
 import shutil
 from pathlib import Path
-from datetime import datetime
 
-from .template import render_page, render_index, load_theme, list_posts
+from .template import render_page, render_index, load_theme, load_theme_static_dir, list_posts
 
 
-def build(input_dir: str, output_dir: str):
+def build(input_dir: str, output_dir: str, theme_name: str = "default") -> int:
+    """Build static site.
+
+    Returns the number of posts built.
+    """
     src = Path(input_dir)
     dst = Path(output_dir)
 
     if dst.exists():
         shutil.rmtree(dst)
 
+    # Load theme
+    theme = load_theme(theme_name)
+
     # Copy static assets
-    theme = load_theme()
-    theme_dir = Path(__file__).parent / "themes" / "default"
-    if theme_dir.exists():
-        shutil.copytree(theme_dir / "static", dst / "static", dirs_exist_ok=True)
+    static_dir = load_theme_static_dir(theme_name)
+    if static_dir is not None and static_dir.exists():
+        dst_static = dst / "static"
+        if dst_static.exists():
+            shutil.rmtree(dst_static)
+        shutil.copytree(static_dir, dst_static)
 
     # Scan markdown posts
     posts = list_posts(src)
@@ -34,3 +42,4 @@ def build(input_dir: str, output_dir: str):
 
     count = len(posts)
     print(f"PandaPress: built {count} post{'s' if count != 1 else ''} -> {output_dir}/")
+    return count

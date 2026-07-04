@@ -61,11 +61,11 @@ pandapress new "我的新文章"
 │   ├── __init__.py
 │   ├── __main__.py      # CLI 入口
 │   ├── builder.py       # 构建引擎
-│   ├── server.py        # 预览服务器
-│   ├── template.py      # 模板渲染
+│   ├── server.py        # 预览服务器 + 文件变更监听
+│   ├── template.py      # 模板引擎（Markdown 渲染、主题加载）
 │   └── themes/          # 内置主题
-├── tests/
 ├── setup.py
+├── .gitignore
 └── README.md
 ```
 
